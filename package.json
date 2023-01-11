@@ -1,0 +1,40 @@
+{
+  "name": "otus-typing",
+  "version": "1.0.0",
+  "description": "OTUS Typing",
+  "main": "index.js",
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "prettier --check . && eslint . --ext .js,.ts && tsc --noEmit",
+    "lint:fix": "prettier --write . && eslint . --fix --ext .js,.ts ",
+    "prepare": "husky install"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Muradov Ravshan",
+    "email": "mortalle77@mail.ru"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vodarum/otus-typing.git"
+  },
+  "license": "ISC",
+  "homepage": "https://github.com/vodarum/otus-typing#readme",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.38.1",
+    "@typescript-eslint/parser": "^5.38.1",
+    "eslint": "^8.22.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4"
+  },
+  "lint-staged": {
+    "*.{js,ts}": "eslint --fix",
+    "*.{js,md}": "prettier --write"
+  }
+}
