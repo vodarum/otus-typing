@@ -26,6 +26,8 @@ module.exports = {
     "import/prefer-default-export": "off",
     "no-console": "off",
     "no-continue": "off",
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": ["error"],
   },
   settings: {
     "import/resolver": {
