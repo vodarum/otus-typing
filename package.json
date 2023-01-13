@@ -20,6 +20,9 @@
   },
   "license": "ISC",
   "homepage": "https://github.com/vodarum/otus-typing#readme",
+  "dependencies": {
+    "@types/uuid": "^9.0.0"
+  },
   "devDependencies": {
     "@types/react": "^18.0.26",
     "@typescript-eslint/eslint-plugin": "^5.38.1",
