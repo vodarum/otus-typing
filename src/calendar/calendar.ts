@@ -17,7 +17,7 @@ export default class Calendar implements ICalendar {
     try {
       const newEvent = Object.assign(event, { id: UUIDv4() });
       const calendarStorage: Map<EventUUID, MyEvent> =
-        await this.getCalendarStorage();
+        this.getCalendarStorage();
 
       calendarStorage.set(newEvent.id, newEvent);
 
@@ -25,7 +25,7 @@ export default class Calendar implements ICalendar {
         JSON.stringify(calendarStorage.get(newEvent.id)) ===
         JSON.stringify(newEvent)
       ) {
-        await this.saveCalendarStorage(calendarStorage);
+        this.saveCalendarStorage(calendarStorage);
 
         return newEvent.id;
       }
@@ -44,7 +44,7 @@ export default class Calendar implements ICalendar {
   ): Promise<AffectedEvent> {
     try {
       const calendarStorage: Map<EventUUID, MyEvent> =
-        await this.getCalendarStorage();
+        this.getCalendarStorage();
       const eventById = calendarStorage.get(id);
 
       if (!eventById) {
@@ -59,7 +59,7 @@ export default class Calendar implements ICalendar {
         JSON.stringify(calendarStorage.get(id)) ===
         JSON.stringify(modifiedEvent)
       ) {
-        await this.saveCalendarStorage(calendarStorage);
+        this.saveCalendarStorage(calendarStorage);
 
         return 1;
       }
@@ -75,7 +75,7 @@ export default class Calendar implements ICalendar {
   async getEvent(id: EventUUID): Promise<MyEvent | null> {
     try {
       const calendarStorage: Map<EventUUID, MyEvent> =
-        await this.getCalendarStorage();
+        this.getCalendarStorage();
 
       return calendarStorage.get(id) ?? null;
     } catch (error) {
@@ -90,10 +90,10 @@ export default class Calendar implements ICalendar {
   async deleteEvent(id: EventUUID): Promise<AffectedEvent> {
     try {
       const calendarStorage: Map<EventUUID, MyEvent> =
-        await this.getCalendarStorage();
+        this.getCalendarStorage();
 
       if (calendarStorage.delete(id)) {
-        await this.saveCalendarStorage(calendarStorage);
+        this.saveCalendarStorage(calendarStorage);
 
         return 1;
       }
@@ -113,7 +113,7 @@ export default class Calendar implements ICalendar {
 
     try {
       const calendarStorage: Map<EventUUID, MyEvent> =
-        await this.getCalendarStorage();
+        this.getCalendarStorage();
 
       /* eslint-disable-next-line */
       for (const event of calendarStorage.values()) {
@@ -152,14 +152,20 @@ export default class Calendar implements ICalendar {
   }
 
   /* eslint class-methods-use-this: ["error", { "exceptMethods": ["getCalendarStorage", "saveCalendarStorage"] }] */
-  private async getCalendarStorage(): Promise<Map<EventUUID, MyEvent>> {
+  private getCalendarStorage(): Map<EventUUID, MyEvent> {
     let result: Map<EventUUID, MyEvent> = new Map();
 
     try {
       const calendarStorageJSON = localStorage.getItem("calendar");
 
       if (calendarStorageJSON !== null) {
-        result = JSON.parse(calendarStorageJSON) ?? result;
+        result = new Map(JSON.parse(calendarStorageJSON)) ?? result;
+        result.forEach((evt: MyEvent) => {
+          /* eslint-disable no-param-reassign */
+          evt.dateFrom = new Date(evt.dateFrom);
+          evt.dateTo = new Date(evt.dateTo);
+          /* eslint-enable no-param-reassign */
+        });
       }
     } catch (error) {
       throw new Error("Error getting CalendarStorage");
@@ -168,11 +174,12 @@ export default class Calendar implements ICalendar {
     return result;
   }
 
-  private async saveCalendarStorage(
-    data: Map<EventUUID, MyEvent>
-  ): Promise<void> {
+  private saveCalendarStorage(data: Map<EventUUID, MyEvent>): void {
     try {
-      localStorage.setItem("calendar", JSON.stringify(data));
+      localStorage.setItem(
+        "calendar",
+        JSON.stringify(Array.from(data.entries()))
+      );
     } catch (error) {
       throw new Error("Error saving CalendarStorage");
     }
